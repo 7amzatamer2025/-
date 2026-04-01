@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | د. ميادة ناصر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --bg: #f4f7fe;
+            --text: #2d3748;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            display: flex;
+            direction: rtl;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            z-index: 100;
+        }
+        .sidebar h2 { color: var(--primary); font-weight: 900; margin-bottom: 40px; text-align: center; }
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            color: #718096;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+
+        /* Main Content */
+        .main-content {
+            margin-right: 260px;
+            padding: 20px;
+            width: calc(100% - 260px);
+            box-sizing: border-box;
+        }
+
+        /* Stats & Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+        .stat-card .number { font-size: 2rem; font-weight: 900; color: var(--primary); }
+
+        /* Section Cards */
+        .section-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            margin-bottom: 30px;
+        }
+        h2.title { font-size: 1.3rem; margin-bottom: 25px; font-weight: 900; border-right: 5px solid var(--primary); padding-right: 15px; color: var(--primary); }
+
+        /* Table Styling */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { text-align: right; padding: 15px; background: #f8fafc; color: #718096; font-size: 0.9rem; border-radius: 10px; }
+        td { padding: 15px; border-bottom: 1px solid #edf2f7; font-weight: 600; font-size: 0.95rem; }
+
+        .status-badge { padding: 5px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+
+        /* Form Styling (تعديل الموقع) */
+        .edit-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; color: #4a5568; }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary); outline: none; }
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-save:hover { background: #357abd; transform: translateY(-2px); }
+
+        /* Login Overlay */
+        #loginOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 70px; padding: 10px; }
+            .sidebar h2, .sidebar span { display: none; }
+            .main-content { margin-right: 70px; width: calc(100% - 70px); }
+            .edit-form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2 style="color: var(--primary); font-weight: 900;"><i class="fas fa-lock"></i> دخول الإدارة</h2>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="اسم المستخدم">
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="كلمة المرور">
+            </div>
+            <button class="btn-save" onclick="checkLogin()">دخول</button>
+            <p id="errorMsg" style="color: var(--danger); margin-top: 10px; display: none;">بيانات الدخول غير صحيحة!</p>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <h2><i class="fas fa-user-md"></i> <span>د. ميادة</span></h2>
+        <a href="/admin" class="active"><i class="fas fa-home"></i> <span>الرئيسية</span></a>
+        <a href="#bookings"><i class="fas fa-calendar-alt"></i> <span>الحجوزات</span></a>
+        <a href="#edit"><i class="fas fa-edit"></i> <span>تعديل الموقع</span></a>
+        <a href="javascript:location.reload()" style="margin-top: 50px; color: var(--danger);"><i class="fas fa-sign-out-alt"></i> <span>خروج</span></a>
+    </aside>
+
+    <main class="main-content">
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h3>إجمالي الحجوزات</h3>
+                <p class="number">{{ bookings|length }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>حجوزات بانتظار التأكيد</h3>
+                <p class="number">
+                    {% set count = [] %}
+                    {% for b in bookings if b.status == 'pending' %}{% set _ = count.append(1) %}{% endfor %}
+                    {{ count|length }}
+                </p>
+            </div>
+        </section>
+
+        <section id="bookings" class="section-card">
+            <h2 class="title">إدارة طلبات الحجز الجديدة</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الطفل</th>
+                            <th>ولي الأمر</th>
+                            <th>السن</th>
+                            <th>التواصل</th>
+                            <th>التاريخ والوقت</th>
+                            <th>التخصص</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking['name'] }}</td>
+                            <td>{{ booking['parent_name'] }}</td>
+                            <td>{{ booking['age'] }} سنة</td>
+                            <td>
+                                <a href="https://wa.me/{{ booking['phone'] }}" target="_blank" style="color: #25d366; text-decoration: none;">
+                                    <i class="fab fa-whatsapp"></i> {{ booking['phone'] }}
+                                </a>
+                            </td>
+                            <td>
+                                <div><i class="far fa-calendar-alt"></i> {{ booking['date'] }}</div>
+                                <div style="font-size: 0.8rem; color: #718096;"><i class="far fa-clock"></i> {{ booking['time'] }}</div>
+                            </td>
+                            <td>{{ booking['specialty'] }}</td>
+                            <td>
+                                <span class="status-badge {{ 'status-confirmed' if booking['status'] == 'confirmed' else 'status-pending' }}">
+                                    {{ 'مؤكد ✅' if booking['status'] == 'confirmed' else 'إنتظار ⏳' }}
+                                </span>
+                            </td>
+                            <td class="action-btns">
+                                <a href="/confirm_booking/{{ booking['id'] }}" class="btn-confirm" style="color: var(--success); margin-left: 10px;"><i class="fas fa-check-circle fa-lg"></i></a>
+                                <a href="/delete_booking/{{ booking['id'] }}" class="btn-delete" style="color: var(--danger);" onclick="return confirm('حذف الحجز؟')"><i class="fas fa-trash-alt fa-lg"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="edit" class="section-card">
+            <h2 class="title">تحديث محتوى الصفحة الرئيسية</h2>
+            <form action="/admin/update_content" method="POST">
+                <div class="edit-form-grid">
+                    <div class="input-group">
+                        <label>العنوان الرئيسي (Hero Title)</label>
+                        <input type="text" name="hero_title" value="{{ content['hero_title'] }}">
+                    </div>
+                    <div class="input-group">
+                        <label>سعر الكشف (ج.م)</label>
+                        <input type="number" name="price" value="{{ content['price'] }}">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>وصف العيادة (Hero Description)</label>
+                    <textarea name="hero_desc" rows="4">{{ content['hero_desc'] }}</textarea>
+                </div>
+                <button type="submit" class="btn-save">حفظ وتحديث الموقع</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            
+            // اليوزر والباسورد اللي إنت طلبتهم
+            if(user === "MAYADA" && pass === "00MAYADA00") {
+                document.getElementById('loginOverlay').style.display = 'none';
+                sessionStorage.setItem('isAdmin', 'true');
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // فحص لو كان مسجل دخول قبل كدة في نفس الجلسة
+        if(sessionStorage.getItem('isAdmin') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

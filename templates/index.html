@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>د. ميادة ناصر | أخصائية تخاطب وتعديل سلوك</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        /* إضافة ستايل سريع لكارت حالة الحجز عشان يبقى Glassmorphism شيك */
+        .user-status-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #fff;
+            animation: fadeIn 0.8s ease;
+        }
+        .user-status-box strong { color: #ffd700; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* حل مشكلة الخروج بره الشاشة في الموبايل */
+        html, body { overflow-x: hidden; width: 100%; position: relative; }
+
+        /* ستايل الخريطة الجديد */
+        .map-wrapper {
+            margin-top: 25px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* ستايل قسم عن الدكتورة */
+        .about-section {
+            padding: 60px 0;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .about-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            color: #fff;
+            text-align: center;
+        }
+        .about-card h2 { color: #ffd700; margin-bottom: 20px; }
+        .about-card ul { list-style: none; padding: 0; }
+        .about-card ul li { margin-bottom: 10px; font-size: 1.1rem; }
+        .tags-container { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .tag { background: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob"></div>
+    </div>
+
+    <div class="theme-switch" id="themeToggle" title="تبديل الوضع الليلي">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">د. ميادة ناصر</div>
+            <ul class="nav-links">
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#about">عن الدكتورة</a></li>
+                <li><a href="#services">تخصصاتنا</a></li>
+                <li><a href="#pricing">الأسعار</a></li>
+                <li><a href="#booking">احجز الآن</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="background-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+
+        <div class="hero-content reveal">
+            <div class="hero-glass-card">
+                <span class="badge">أخصائية معتمدة</span>
+                <h1>{{ content['hero_title'] | safe }}</h1>
+                <p>{{ content['hero_desc'] }}</p>
+                <div class="hero-btns">
+                    <a href="#booking" class="btn-main">ابدأ رحلة العلاج الآن</a>
+                    <a href="#services" class="btn-secondary-outline">تخصصات العيادة</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="about" class="about-section container reveal">
+        <div class="about-card">
+            <h2><i class="fas fa-user-md"></i> عن الدكتورة</h2>
+            <h3>دكتورة ميادة ناصر محمد</h3>
+            <ul>
+                <li><i class="fas fa-graduation-cap"></i> بكالوريوس تربية خاصة</li>
+                <li><i class="fas fa-certificate"></i> دبلومة في الإعاقة العقلية</li>
+                <li><i class="fas fa-university"></i> ماجستير في العلوم النفسية - جامعة القاهرة</li>
+            </ul>
+            <div class="tags-container">
+                <span class="tag">داون</span>
+                <span class="tag">إعاقة عقلية</span>
+                <span class="tag">تأخر لغوي</span>
+                <span class="tag">تأخر في الكلام</span>
+                <span class="tag">لدغات</span>
+                <span class="tag">تلعثم</span>
+                <span class="tag">تنمية مهارات</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="status-check" class="container">
+        {% if last_booking %}
+        <div class="user-status-box reveal">
+            <p><i class="fas fa-user-check"></i> أهلاً بك مجدداً، آخر حجز للطفل: <strong>{{ last_booking['name'] }}</strong></p>
+            <p>الحالة الحالية: <strong>{{ '✅ تم تأكيد موعدك' if last_booking['status'] == 'confirmed' else '⏳ جاري مراجعة طلبك' }}</strong></p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section id="services" class="services">
+        <h2 class="section-title reveal">تخصصات العيادة</h2>
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <i class="fas fa-comments"></i>
+                <h3>نطق وكلام ولدغات</h3>
+                <p>تصحيح مخارج الحروف وعلاج مشاكل النطق واللدغات بأنواعها.</p>
+            </div>
+            <div class="service-card reveal">
+                <i class="fas fa-wave-square"></i>
+                <h3>التلعثم</h3>
+                <p>برامج متخصصة لزيادة الطلاقة الكلامية وتقليل التأتأة.</p>
+            </div>
+            <div class="service-card reveal">
+                <i class="fas fa-brain"></i>
+                <h3>صعوبات تعلم</h3>
+                <p>تنمية المهارات الأكاديمية والنمائية للأطفال.</p>
+            </div>
+            <div class="service-card reveal">
+                <i class="fas fa-baby"></i>
+                <h3>تأخر لغوي</h3>
+                <p>تحفيز اللغة وزيادة الحصيلة اللغوية لضعاف التواصل.</p>
+            </div>
+            <div class="service-card reveal">
+                <i class="fas fa-hands-helping"></i>
+                <h3>تنمية مهارات</h3>
+                <p>تدريبات لرفع مستوى التركيز والانتباه والادراك.</p>
+            </div>
+            <div class="service-card reveal">
+                <i class="fas fa-users"></i>
+                <h3>اضطرابات تواصل</h3>
+                <p>علاج مشاكل التواصل الاجتماعي والتفاعل اللفظي.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <h2 class="section-title reveal">قائمة الأسعار والمواعيد</h2>
+        <div class="services-grid pricing-grid">
+            <div class="service-card pricing-card reveal">
+                <div class="price-tag">{{ content['price'] }} ج.م</div>
+                <h3>كشف لأول مرة</h3>
+                <p><i class="far fa-clock"></i> المدة: 30 دقيقة</p>
+            </div>
+            <div class="service-card pricing-card reveal featured">
+                <div class="price-tag">150 ج.م</div>
+                <h3>جلسة متابعة (بالعيادة)</h3>
+                <p><i class="far fa-clock"></i> المدة: 60 دقيقة</p>
+            </div>
+            <div class="service-card pricing-card reveal">
+                <div class="price-tag">150 ج.م</div>
+                <h3>جلسة أونلاين (Zoom)</h3>
+                <p><i class="far fa-clock"></i> المدة: 45 دقيقة</p>
+                <p class="note">* أول مرة (تقييم) {{ content['price'] }} ج.م</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="booking">
+        <div class="glass-container reveal">
+            <h2>طلب حجز موعد</h2>
+            <form id="appointmentForm" action="/book" method="POST">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>اسم الطفل / المريض</label>
+                        <input type="text" name="name" placeholder="أدخل الاسم بالكامل" required>
+                    </div>
+                    <div class="input-group">
+                        <label>سن الطفل</label>
+                        <input type="number" name="age" placeholder="سن الطفل" required>
+                    </div>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>اسم ولي الأمر</label>
+                        <input type="text" name="parent_name" placeholder="اسم الأب أو الأم" required>
+                    </div>
+                    <div class="input-group">
+                        <label>رقم التواصل (واتساب)</label>
+                        <input type="tel" name="phone" placeholder="01xxxxxxxxx" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>نوع التخصص المطلوب</label>
+                    <select name="specialty">
+                        <option value="نطق وكلام">نطق وكلام _ لدغات</option>
+                        <option value="تلعثم">تلعثم</option>
+                        <option value="اضطرابات تواصل">اضطرابات تواصل</option>
+                        <option value="صعوبات تعلم">صعوبات تعلم</option>
+                        <option value="تأخر لغوي">تأخر لغوي</option>
+                        <option value="تنميه مهارات">تنميه مهارات</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>نوع الحجز (يحدد مدة الجلسة)</label>
+                    <select name="type">
+                        <option value="Clinic_First">كشف لأول مرة (30 دقيقة) - {{ content['price'] }} ج</option>
+                        <option value="Clinic_Session">جلسة متابعة (60 دقيقة) - 150 ج</option>
+                        <option value="Online_First">أونلاين تقييم (30 دقيقة) - {{ content['price'] }} ج</option>
+                        <option value="Online_Session">أونلاين متابعة (45 دقيقة) - 150 ج</option>
+                    </select>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>تاريخ الموعد المفضل</label>
+                        <input type="date" name="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>الساعة (متاح من 9ص لـ 6م)</label>
+                        <input type="time" name="time" min="09:00" max="18:00" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">تأكيد طلب الحجز</button>
+            </form>
+
+            <div class="map-wrapper">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3451.98!2d31.23!3d30.04!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sar!2seg!4v1710000000000!5m2!1sar!2seg" 
+                    width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="https://www.google.com/maps/search/%D8%B4%D8%A7%D8%B1%D8%B9+%D9%A2%D9%A7+%D8%A7%D9%84%D9%86%D8%B2%D9%87%D9%87+%D9%A2+%D8%A7%D9%84%D9%82%D8%A7%D9%87%D8%B1%D9%87+%E2%80%AD/@30.1163734,31.3208878,14z/data=!3m1!4b1?hl=en&entry=ttu&g_ep=EgoyMDI2MDMyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: bold;">
+                    <i class="fas fa-map-marker-alt"></i> اتجاهات العيادة على جوجل ماب
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-info">
+            <p>© 2026 جميع الحقوق محفوظة لعيادة د. ميادة ناصر</p>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/share/18U7Z99D5M/" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="https://wa.me/201281137916" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.tiktok.com/@mayadanasser7" target="_blank"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/201281137916" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

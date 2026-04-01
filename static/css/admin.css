@@ -1,0 +1,66 @@
+:root {
+    --primary: #4A90E2;
+    --bg-admin: #f0f4f8;
+    --glass: rgba(255, 255, 255, 0.7);
+    --text: #1e293b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+
+body { background: var(--bg-admin); color: var(--text); overflow-x: hidden; }
+
+.admin-wrapper { display: flex; min-height: 100vh; }
+
+/* الـ Sidebar */
+.sidebar {
+    width: 280px; background: #fff; padding: 2rem;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.03);
+    position: sticky; top: 0; height: 100vh;
+}
+
+.admin-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); margin-bottom: 3rem; }
+
+.sidebar nav a {
+    display: block; padding: 1rem; color: #64748b; text-decoration: none;
+    font-weight: 700; border-radius: 12px; margin-bottom: 0.5rem; transition: 0.3s;
+}
+
+.sidebar nav a.active, .sidebar nav a:hover {
+    background: var(--primary); color: #fff;
+}
+
+/* المحتوى */
+.main-content { flex: 1; padding: 3rem; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; }
+
+.stat-card {
+    background: var(--glass); backdrop-filter: blur(10px);
+    padding: 2rem; border-radius: 2rem; border: 1px solid #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.02); text-align: center;
+}
+
+.stat-card .number { font-size: 2.5rem; font-weight: 900; color: var(--primary); }
+
+/* الجداول والفورم */
+.table-container, .glass-form {
+    background: #fff; padding: 2rem; border-radius: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 1rem;
+}
+
+table { width: 100%; border-collapse: collapse; text-align: right; }
+th { padding: 1rem; border-bottom: 2px solid #f1f5f9; color: #64748b; }
+td { padding: 1.2rem; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
+
+.status.pending { background: #fef3c7; color: #92400e; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; }
+
+.input-group { margin-bottom: 1.5rem; }
+.input-group label { display: block; font-weight: 700; margin-bottom: 0.5rem; }
+.input-group input, .input-group textarea {
+    width: 100%; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; outline: none;
+}
+
+.btn-save {
+    background: var(--primary); color: #fff; border: none; padding: 1rem 2rem;
+    border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%;
+}
